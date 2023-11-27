@@ -1,70 +1,121 @@
 ﻿using System;
 
-
 class Program
 {
     public static void Main(string[] argv)
     {
-        Figure figure = new();  // Объект фигура со всеми нужными полями
-        GetInfoAboutFigure(ref figure);  // Ввод названия и координат фигуры на доске
-
-        Point point_to_jmp = new();  // Создание объекта точки с информацией о конечных
-        GetPointToJump(ref point_to_jmp);  // Получение информации о точке, куда должна* сходить фигура
-
-        bool can_jump = CanMoveTo(point_to_jmp, figure);  // Определение что за фигура c дальнейшими вычислениями
+        GetInfoAboutFigure(out Figure figure);  // Ввод названия и координат фигуры на доске
+        GetPointToJump(out Point point_to_jmp);  // Получение информации о точке, куда должна* сходить фигура
+        CanMoveTo(point_to_jmp, figure, out bool can_jump);  // Определение может ли фигура сходить на данную точку
         PrintResult(can_jump);  // Вывод результата
     }
 
-    static void GetInfoAboutFigure(ref Figure figure)
+    static void GetInfoAboutFigure(out Figure figure)  // Метод ввода информации о фигуре с валидацией данных
     {
+        figure = new();
+
         // Ввод названия фигуры
-        Console.Write("Введите символ обозначающий фигуру (Ф – ферзь, Ц – король, Л – ладья, С – слон, К – конь): ");
-        figure.Name = Console.ReadLine() ?? "";
+        Console.Write("Введите символ обозначающий фигуру (Ф – ферзь, Ц – король, Л – ладья, С – слон, К – конь): ");  // Приглашение к вводу фигуры
+        string input = Console.ReadLine() ?? "";  // Если ничего не ввели, значение по умолчанию - пустая строка
+
+        if (new List<string> { "Ф", "Ц", "Л", "С", "К" }.All(s => s != input)) {  // Если введённое значение не в этом списке - выход
+            Console.WriteLine("Не корректное значение! Допустимый ввод для фигуры: Ф, Ц, Л, С, К.");  // Вывод предупреждения в случае неудачи
+            Environment.Exit(1);  // Выход из программы с кодом возврата не 0
+        }
+
+        figure.Name = input;
+
 
         // Ввод x координаты фигуры
-        Console.Write("Введите координату фигуры по x (от 1 до 8): ");
-        figure.X = Convert.ToInt32(Console.ReadLine());
+        Console.Write("Введите координату фигуры по x (от 1 до 8): ");  // Приглашение к вводу первой координаты фигуры
+        input = Console.ReadLine() ?? "0";  // Если ничего не было введено, значение по умолчанию - 0
+
+        if (!Int32.TryParse(input, out int number)) {  // Попытка перевести строку в число
+            Console.WriteLine("Не корректное тип! Ввод для координаты должен быть целочисленным.");  // Вывод предупреждения в случае неудачи
+            Environment.Exit(1);  // Выход из программы с кодом возврата не 0
+        }
+        else if (number < 1 || number > 8) {
+            Console.WriteLine("Не корректное значение! Ввод для координаты должен быть в интервале [1; 8]");  // Вывод предупреждения в случае неудачи
+            Environment.Exit(1);  // Выход из программы с кодом возврата не 0
+        }
+
+        figure.X = number;
+
 
         // Ввод y координаты фигуры
-        Console.Write("Введите координату фигуры по y (от 1 до 8): ");
-        figure.Y = Convert.ToInt32(Console.ReadLine());
+        Console.Write("Введите координату фигуры по y (от 1 до 8): ");  // Приглашение к вводу второй координаты фигуры
+        input = Console.ReadLine() ?? "0";  // Если ничего не было введено, значение по умолчанию - 0
+
+        if (!Int32.TryParse(input, out number)) {  // Попытка перевести строку в число
+            Console.WriteLine("Не корректное тип! Ввод для координаты должен быть целочисленным.");  // Вывод предупреждения в случае неудачи
+            Environment.Exit(1);  // Выход из программы с кодом возврата не 0
+        }
+        else if (number < 1 || number > 8) {
+            Console.WriteLine("Не корректное значение! Ввод для координаты должен быть в интервале [1; 8]");  // Вывод предупреждения в случае неудачи
+            Environment.Exit(1);  // Выход из программы с кодом возврата не 0
+        }
+
+        figure.Y = number;
     }
 
-    static void GetPointToJump(ref Point point)
+    static void GetPointToJump(out Point point)  // Метод ввода информации о конечной точки на доске с валидацией данных
     {
+        point = new();
+
         // Ввод x координаты конечной точки
         Console.Write("Введите координату конечной точки по x (от 1 до 8): ");
-        point.X = Convert.ToInt32(Console.ReadLine());
+        string input = Console.ReadLine() ?? "0";  // Если ничего не было введено, значение по умолчанию - 0
+
+        if (!Int32.TryParse(input, out int number)) {  // Попытка перевести строку в число
+            Console.WriteLine("Не корректное тип! Ввод для координаты должен быть целочисленным.");  // Вывод предупреждения в случае неудачи
+            Environment.Exit(1);  // Выход из программы с кодом возврата не 0
+        }
+        else if (number < 1 || number > 8) {
+            Console.WriteLine("Не корректное значение! Ввод для координаты должен быть в интервале [1; 8]");  // Вывод предупреждения в случае неудачи
+            Environment.Exit(1);  // Выход из программы с кодом возврата не 0
+        }
+
+        point.X = number;
+
 
         // Ввод y координаты конечной точки
         Console.Write("Введите координату конечной точки по y (от 1 до 8): ");
-        point.Y = Convert.ToInt32(Console.ReadLine());
+        input = Console.ReadLine() ?? "0";  // Если ничего не было введено, значение по умолчанию - 0
 
+        if (!Int32.TryParse(input, out number)) {  // Попытка перевести строку в число
+            Console.WriteLine("Не корректное тип! Ввод для координаты должен быть целочисленным.");  // Вывод предупреждения в случае неудачи
+            Environment.Exit(1);  // Выход из программы с кодом возврата не 0
+        }
+        else if (number < 1 || number > 8) {
+            Console.WriteLine("Не корректное значение! Ввод для координаты должен быть в интервале [1; 8]");  // Вывод предупреждения в случае неудачи
+            Environment.Exit(1);  // Выход из программы с кодом возврата не 0
+        }
+
+        point.Y = number;
     }
 
-    static bool CanMoveTo(Point to, Figure figure)
+    static void CanMoveTo(Point to, Figure figure, out bool result)
     {
         string name = (figure.Name ?? "").ToUpper();  // Сохраняем имя в верхнем регистре (чтобы сравнивать) в локальную переменную
 
         if (name == "Ф") {  // Ферзь
-            return Queen(to, figure);
+            result = Queen(to, figure);
         }
         else if (name == "Ц") {  // Король
-            return King(to, figure);
+            result = King(to, figure);
         }
         else if (name == "Л") {  // Ладья
-            return Rook(to, figure);
+            result = Rook(to, figure);
         }
         else if (name == "С") {  // Слон
-            return Bishop(to, figure);
+            result = Bishop(to, figure);
         }
         else if (name == "К")  // Конь
         {
-            return Knight(to, figure);
+            result = Knight(to, figure);
         }
-        else {  // Не валидное значение для фигуры
-            Console.WriteLine("Фигура не распознана.");
-            return false;
+        else {
+            throw new Exception("не возможно..");
         }
     }
 
@@ -86,6 +137,7 @@ class Program
          */
         return Math.Abs(figure.X - to.X) == Math.Abs(figure.Y - to.Y);
     }
+
     static bool Rook(Point to, Figure figure)
     {
         /*
@@ -93,6 +145,7 @@ class Program
          */
         return figure.X == to.X || figure.Y == to.Y;
     }
+
     static bool King(Point to, Figure figure)
     {
         /*
@@ -101,6 +154,7 @@ class Program
          */
         return Math.Abs(figure.X - to.X) + Math.Abs(figure.Y - to.Y) == 1;
     }
+
     static bool Queen(Point to, Figure figure)
     {
         /*
@@ -109,6 +163,7 @@ class Program
          */
         return Bishop(to, figure) || Rook(to, figure);
     }
+
     static void PrintResult(bool can)
     {
         if (can) {
