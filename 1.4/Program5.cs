@@ -5,7 +5,7 @@ class Program
 {
     public static void Main(string[] argv)
     {
-        GetNumber(out Decimal x);  // Считывание вводимого числа x
+        GetNumber(out Decimal x);  // Получение числа с приглашение к вводу
         CalcResult(x, out Decimal result);  // Вычисление значение по формуле (результат в reuslt переменной)
         PrintResult(result);  // Вывод результата в терминал
     }
@@ -13,18 +13,23 @@ class Program
     public static void GetNumber(out Decimal x)
     {
         Console.Write("Введите x: ");
-        x = Convert.ToDecimal(Console.ReadLine());
+        string input = Console.ReadLine() ?? "0";  // Если ничего не ввели - значение по умолчанию 0
+
+        if (!Decimal.TryParse(input, out x)) {  // Пытаемся привести строку к числу
+            Console.WriteLine("Не корректный тип! Дотустимый тип ввода для числа - целочисленный.");  // Предупреждение в случае, если строка не число
+            Environment.Exit(1);  // Выход с кодом возврата 1
+        }
     }
 
     public static void CalcResult(Decimal x, out Decimal result)
     {
         result = 0.0m;
 
-        Decimal sign = 1m;
+        Decimal sign = 1m;  // заводим переменну-флаг для изменения знака слагаемого
 
         for (int i = 1; i <= 13; i += 2) {  // По формуле показатель степени и знаминатель нечетные числа от 1 до 13 (шаг 2)
             result += sign * (Power(x, i) / Factorial(i));
-            sign *= -1m;
+            sign *= -1m;  // При каждом новом слагаемом - изменяется знак, путём умножения его на -1
         }
     }
 
