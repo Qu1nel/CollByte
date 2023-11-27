@@ -12,8 +12,13 @@ class Program
 
     public static void GetN(out Int32 N)
     {
-        Console.Write("Введите число N: ");
-        N = Convert.ToInt32(Console.ReadLine());
+        Console.Write("Введите число N: ");  // Выводим приглашение к вводу
+        string input = Console.ReadLine() ?? "0";  // Если ничего не ввели - значение по умолчанию 0
+
+        if (!Int32.TryParse(input, out N)) {  // Пытаемся привести строку к числу
+            Console.WriteLine("Не корректный тип! Дотустимый тип ввода для числа - целочисленный.");  // Предупреждение в случае, если строка не число
+            Environment.Exit(1);  // Выход с кодом возврата 1
+        }
     }
 
     public static void CalcResult(Int32 number, out Int32 result)
