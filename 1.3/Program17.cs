@@ -115,7 +115,7 @@ class Program
             result = Knight(to, figure);
         }
         else {
-            throw new Exception("не возможно..");
+            throw new Exception("невозможно..");
         }
     }
 
